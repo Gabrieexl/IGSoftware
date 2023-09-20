@@ -25,11 +25,23 @@ mongoose.connection.on('disconnected',()=>{
 
 app.use(express.json());
 
+
 //middLewares
 app.use("/api/auth",authRoute);
 app.use("/api/users",usersRoute);
 app.use("/api/hotels",hotelsRoute);
 app.use("/api/rooms",roomsRoute);
+
+app.use((err,req, res, next) =>{
+    const errorStatus = err.status || 500
+    const errorMessage = err.message || "Servidor no disponible"
+    return res.status(errorStatus).json({
+        message:errorMessage,
+        status:errorStatus,
+        success: false,
+        stack:err.stack
+    })
+})
 
 app.listen (8800, ()=>{
     connect()
