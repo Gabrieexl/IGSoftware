@@ -12,17 +12,24 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useContext, useEffect, useState } from "react";
 import useFetch from "./../../hooks/useFecth"
-import { useLocation } from "react-router-dom";
-import { SearchContex } from "../../context/SearchContext";
+import { useLocation, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import Reserve from "../../components/reserve/Reserve";
+import { SearchContext } from "../../context/SearchContext";
 
 const Hotel = () => {
   const location = useLocation()
   const hId = location.pathname.split("/")[2]
   const [slideNumber, setSlideNumber] = useState(0);
   const [open, setOpen] = useState(false);
-  const [days, setDays] = useState();
+  const [openModal, setOpenModal] = useState(false);
+  const [days, setDays] = useState(0);
+
   const {data, loading, error, reFetch} = useFetch(`/hotels/find/${hId}`)
-  const {dates,options} = useContext(SearchContex);
+  const {user} = useContext(AuthContext)
+  const navigate = useNavigate()
+
+  const {dates,options} = useContext(SearchContext);
   const MILISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
   const dayDifference = (date1,date2) =>{
     const timeDiff = Math.abs(date2.getTime() - date1.getTime());
@@ -31,8 +38,8 @@ const Hotel = () => {
   }
   useEffect(()=>{
     try{
-      localStorage.setItem("startDate",new Date(dates[0].startDate));
-      localStorage.setItem("startDate",new Date(dates[0].endDate));
+      localStorage.setItem("startDate", new Date(dates[0].startDate));
+      localStorage.setItem("startDate", new Date(dates[0].endDate));
       const currentDay = dayDifference(dates[0].endDate,dates[0].startDate);
       setDays(currentDay)
     }catch(err){
@@ -78,11 +85,22 @@ const Hotel = () => {
     }
     setSlideNumber(newSlideNumber)
   };
+
+  const handleClick = () => {
+    if(user){
+      setOpenModal(true);
+
+    }else{
+      navigate("/login")
+    }
+  }
+
   return (
     <div>
       <Navbar />
       <Header type="list" />
-      <div className="hotelContainer">
+      {loading? ("Cargando..."):
+      (<div className="hotelContainer">
         {open && (
           <div className="slider">
             <FontAwesomeIcon
@@ -145,13 +163,16 @@ const Hotel = () => {
               <h2>
                 <b>${days * data.cheapestPrice * options.room}</b> ({days} noches)
               </h2>
-              <button>Reservar ahora!</button>
+              <button onClick={handleClick}>Reservar ahora!</button>
             </div>
           </div>
         </div>
         <MailList />
         <Footer />
       </div>
+      )}
+
+      {openModal && <Reserve setOpen={setOpenModal} hotelId={hId} />}
     </div>
   );
 };

@@ -3,7 +3,8 @@ import "./login.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast, {Toaster} from "react-hot-toast";
-import { AuthContex } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
+
 
 const Login = () => {
     const [credencials,setCredentians] = useState({
@@ -11,12 +12,13 @@ const Login = () => {
         password:undefined,
     });
 
-    const {user, loading, error, dispatch} = useContext(AuthContex)
+    const {loading, error, dispatch} = useContext(AuthContext)
     const navigate = useNavigate()
 
     const handleChange = (e) => {
         setCredentians((prev) =>({...prev,[e.target.id]:e.target.value}));
     }
+
     const login = async (e) => {
         e.preventDefault();
         
@@ -47,8 +49,6 @@ const Login = () => {
         }
     }
 
-    console.log(user)
-
     return (
         <div className="container-login">
             <div className="main">
@@ -56,9 +56,11 @@ const Login = () => {
             <div className="login">
                 <label for="label">Iniciar Sesion</label>
                     <input type="text" placeholder="Nombre de usuario" id="username" className="lInput" 
+                    onKeyUp={(e)=> e.key==="Enter" ? login(e):""}
                     onChange={handleChange}
                     />
                     <input type="password" placeholder="Contraseña" id="password" className="lInput" 
+                    onKeyUp={(e)=> e.key==="Enter" ? login(e):""}
                     onChange={handleChange}
                     />
                     <button className="lButton" onClick={login}>Ingresar</button>

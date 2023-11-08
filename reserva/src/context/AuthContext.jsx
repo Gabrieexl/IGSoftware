@@ -17,7 +17,7 @@ const initState = () =>{
     }
 }
 const INITIAN_STATE = initState();
-export const AuthContex = createContext(INITIAN_STATE);
+export const AuthContext = createContext(INITIAN_STATE);
 
 const AuthReducer = (state,action) =>{
     switch(action.type){
@@ -50,7 +50,7 @@ const AuthReducer = (state,action) =>{
     }
 };
 
-export const AuthContexProvider = ({children}) => {
+export const AuthContextProvider = ({children}) => {
     const [state,dispatch] = useReducer(AuthReducer,INITIAN_STATE);
     
     useEffect(()=>{
@@ -58,13 +58,13 @@ export const AuthContexProvider = ({children}) => {
     },[state.user])
 
     return(
-        <AuthContex.Provider value={{
+        <AuthContext.Provider value={{
             user:state.user,
             loading:state.loading,
             error:state.error,
             dispatch
         }}>
         {children}    
-        </AuthContex.Provider>
+        </AuthContext.Provider>
     )
 }

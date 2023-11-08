@@ -11,7 +11,7 @@ const INITIAN_STATE = {
     }
 };
 
-export const SearchContex = createContext(INITIAN_STATE);
+export const SearchContext = createContext(INITIAN_STATE);
 
 const SearchReducer = (state,action) =>{
     switch(action.type){
@@ -24,17 +24,17 @@ const SearchReducer = (state,action) =>{
     }
 };
 
-export const SearchContexProvider = ({children}) => {
+export const SearchContextProvider = ({children}) => {
     const [state,dispatch] = useReducer(SearchReducer,INITIAN_STATE);
     
     return(
-        <SearchContex.Provider value={{
+        <SearchContext.Provider value={{
             city:state.city,
             dates:state.dates,
             options:state.options,
             dispatch
         }}>
         {children}    
-        </SearchContex.Provider>
+        </SearchContext.Provider>
     )
 }
